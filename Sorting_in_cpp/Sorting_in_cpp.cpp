@@ -8,53 +8,49 @@
 #include <math.h>
 using namespace std;
 
-const int N = 20, K = 10;
+const int N = 10, K = 100000;
 
-struct Node {
-	float key;
-	Node* next;
-	Node* prev;
+struct node {
+	double key;
+	node* next;
 };
 
-Node* NewNode(float key) {
-	Node* x = new Node;
+node* Get_node(double key) {
+	node* x = new node;
 	x->key = key;
 	x->next = NULL;
-	x->prev = NULL;
 	return x;
 }
 
-void ListInsert(Node* &first, float key) {
-	Node* x = NewNode(key);
-	if (first == NULL) { first = x; return; }
-	Node* tmp;
-	for (tmp = first; tmp->key < x->key && tmp->next != NULL; tmp = tmp->next);
-	x->next = tmp->next;
-	tmp->next = x;
-	x->prev = tmp;
-	if (tmp == first) first = x;
+void Insert_node(node* &first, node* x) {
+	node* war = new node;
+	war->next = first;
+
+	while (war->next != NULL && war->next->key < x->key) war = war->next;
+	if (war->next == first) first = x;
+	x->next = war->next;
+	war->next = x;
 }
 
-float* GetRandArr(int n, int k) {
-	float* A = new float[n];
-
-	for (int i = 0; i < n; i++)
-		A[i] = (rand() % k)/k;
-
+double* GetRandArr(int n, int k) {
+	double* A = new double[n];
+	for (int i = 0; i < n; i++) {
+		double key = rand() % k;
+		A[i] = key / k;
+	}
 	return A;
 }
 
-void PrintArr(float* A, int n) {
+void PrintArr(double* A, int n) {
 	for (int i = 0; i < n; i++)
 		cout << A[i] << " ";
-
 	cout << endl;
 }
 
-void BucketSort(float* &A, int n) {
-	Node** B=new Node*[n];
+void BucketSort(double* &A, int n) {
+	node** B=new node*[n];
 	for (int i = 0; i < n; i++) B[i] = NULL;
-	for (int i = 0; i < n; i++) ListInsert(B[ (int)floor(n*A[i]) ], A[i]);
+	for (int i = 0; i < n; i++) Insert_node(B[(int)floor(n*A[i])], Get_node(A[i]));
 
 	int j = 0;
 	for (int i = 0; i < n; i++) {
@@ -86,6 +82,11 @@ void CountSort(int *&A, int n, int k) {
 	A = B;
 }
 
+bool Arr_check(double *A, int n) {
+	for (int i = 1; i < n; i++) if (A[i] < A[i - 1]) return false;
+	return true;
+}
+
 
 
 
@@ -93,13 +94,17 @@ void CountSort(int *&A, int n, int k) {
 int main(){
 	srand(time(NULL));
 	
-	float* A = GetRandArr(N, K);
+	double* A = GetRandArr(N, K);
 	PrintArr(A,N);
+	cout << Arr_check(A, N);
+	cout << endl;
 
 	BucketSort(A, N);
 
 	PrintArr(A,N);
-
+	cout << endl;
+	cout << Arr_check(A, N);
+	cout << endl;
 
 	system("pause");
 	cout << endl;

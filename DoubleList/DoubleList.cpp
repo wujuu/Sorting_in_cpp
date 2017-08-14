@@ -8,20 +8,28 @@
 #include <cmath>
 using namespace std;
 
-const int N = 20, K = 10;
+const int N = 20, K = 10000;
 
 struct node {
 	double key;
 	node* next;
-	node* prev;
-
 };
 
-node* Get_node(int key) {
+node* Get_node(double key) {
 	node* x = new node;
 	x->key = key;
-	x->next = x->prev = NULL;
+	x->next = NULL;
 	return x;
+}
+
+void Insert_node(node* &first, node* x) {
+	node* war = new node;
+	war->next = first;
+
+	while (war->next != NULL && war->next->key < x->key) war = war->next;
+	if (war->next == first) first = x;
+	x->next = war->next;
+	war->next = x;
 }
 
 
@@ -29,34 +37,16 @@ node* Get_node(int key) {
 node* Get_list(int n, int k) {
 	node* first = NULL;
 	for (int i = 0; i < n; i++) {
-		node* x = Get_node(rand()%k);
-		x->next = first;
-		if(first!=NULL) first->prev = x;
-		first = x;
+		double key = rand() % k;
+		node* x = Get_node(key/k);
+		Insert_node(first, x);
 	}
 	return first;
 }
 
-node* Insert_node(node* &first, node* x) {
-	if (first == NULL) first = x;
-	else {
-		node* tmp = first;
-		for ( ; tmp->next != NULL && tmp->key < x->key; tmp = tmp->next);
-		if (tmp->key < x->key) {
-			tmp->next = x;
-			x->prev = tmp;
-		}
-		else {
-			x->next = tmp;
-			x->prev = tmp->prev;
-			tmp->prev->next = x;
-			tmp->prev = x;
-		}
 
-	}
-	
-	
-}
+
+
 
 void Print_list(node* first) {
 	for (node* x = first; x != NULL; x = x->next)
