@@ -8,8 +8,9 @@
 #include <math.h>
 using namespace std;
 
-const int N = 8, K = 100;
+const int N = 20, K = 100;
 
+//LISTS
 struct node {
 	double key;
 	node* next;
@@ -58,30 +59,61 @@ node* Del_head_node(node* &first) {
 	return tmp;
 }
 
+node* Merge_list(node* first1, node* first2) {
+	node* result = NULL;
+
+	while (first1 != NULL && first2 != NULL) {
+		if (first1->key > first2->key)
+			Add_head_node(result, Del_head_node(first1));
+		else
+			Add_head_node(result, Del_head_node(first2));
+	}
+
+	if (first1 == NULL)
+		while (first2 != NULL)
+			Add_head_node(result, Del_head_node(first2));
+
+	if (first2 == NULL)
+		while (first1 != NULL)
+			Add_head_node(result, Del_head_node(first1));
+
+	return result;
+}
 
 
-int* GetRandArr(int n, int k) {
+
+//ARRAYS
+//Basic
+void Swap(int *A, int i, int j) {
+	int tmp = A[i];
+	A[i] = A[j];
+	A[j] = tmp;
+}
+int* Get_array(int n, int k) {
 	int* A = new int[n];
 	for (int i = 0; i < n; i++) {
 		A[i] = rand() % k;
 	}
 	return A;
 }
-
-void PrintArr(int* A, int n) {
+void Print_array (int* A, int n) {
 	for (int i = 0; i < n; i++)
 		cout << A[i] << " ";
+
 	cout << endl;
 }
-
-void BucketSort(double* &A, int n) {
+//Bucket
+void Bucket_sort(double* &A, int n) {
 	node** B=new node*[n];
+
 	for (int i = 0; i < n; i++) 
 		B[i] = NULL;
+
 	for (int i = 0; i < n; i++) 
 		Insert_node(B[(int)floor(n*A[i])], Get_node(A[i]));
 
 	int j = 0;
+
 	for (int i = 0; i < n; i++) {
 		while (B[i] != NULL) {
 			A[j] = B[i]->key;
@@ -90,8 +122,8 @@ void BucketSort(double* &A, int n) {
 		}
 	}
 }
-
-void CountSort(int *&A, int n, int k) {
+//Count
+void Count_sort(int *&A, int n, int k) {
 	int *B = new int[n], *C = new int[k];
 
 	for (int i = 0; i < k; i++)
@@ -110,27 +142,16 @@ void CountSort(int *&A, int n, int k) {
 
 	A = B;
 }
-
-void Swap(int *A, int i, int j) {
-	int tmp = A[i];
-	A[i] = A[j];
-	A[j] = tmp;
-}
-
+//Quick
 int Partition(int* A, int start, int end) {
 	int i = start - 1, j = end + 1, x = A[start];
 	while (true) {
-		do i++;
-		while (A[i] < x);
-
-		do j--;
-		while (A[j] > x);
-
+		do i++; while (A[i] < x);
+		do j--; while (A[j] > x);
 		if (i < j) Swap(A, i, j);
 		else return j;
 	}
 }
-
 void Quick_sort(int* A, int start=0, int end=N-1) {
 	if (start < end) {
 		int middle = Partition(A, start, end);
@@ -138,42 +159,48 @@ void Quick_sort(int* A, int start=0, int end=N-1) {
 		Quick_sort(A, middle + 1, end);
 	}
 }
+//Heap
+int Parent(int i) {
+	return (i - 1) / 2;
+}
+int Left(int i) {
+	return 2 * i + 1;
+}
+int Right(int i) {
+	return 2 * i + 2;
+}
+void Heapify(int* A, int i, int n) {
+	int imax = i;
 
-node* Merge_list(node* first1, node* first2) {
-	node* result = NULL;
+	if (Left(i) < n && A[Left(i)] > A[imax]) 
+		imax = Left(i);
 
-	while (first1 != NULL || first2 != NULL) {
-		if (first2 == NULL)
-			Add_head_node(result, Del_head_node(first1));
-		else if (first1->key < first2->key) {
-			Add_head_node(result, Del_head_node(first1));
-			continue; }
-		if (first1 == NULL)
-			Add_head_node(result, Del_head_node(first2));
-		else if (first1->key >= first2->key)
-			Add_head_node(result, Del_head_node(first2));
+	if (Right(i) < n && A[Right(i)] > A[imax]) 
+		imax = Right(i);
+
+	if (imax != i) {
+		Swap(A, i, imax);
+		Heapify(A, imax, n);
 	}
-	return result;
 }
-
-bool Arr_check(double *A, int n) {
-	for (int i = 1; i < n; i++) if (A[i] < A[i - 1]) return false;
-	return true;
+void Make_heap(int* A, int n) {
+	for (int i = Parent(n - 1); i >= 0; i--)
+		Heapify(A, i, n);
 }
+void Heap_sort(int* A, int n) {
+	Make_heap(A, n);
 
-
-
-
+	for (int i = n - 1; i >= 1; i--) {
+		Swap(A, i, 0);
+		Heapify(A, 0, i);
+	}
+}
 
 int main(){
-	srand(time(NULL));
-	node* list1 = Get_list(N, K);
-	Print_list(list1);
-	node* list2 = Get_list(N+5,K);
-	Print_list(list2);
-	node* result = Merge_list(list1, list2);
-	Print_list(result);
-
+	int* A = Get_array(N, K);
+	Print_array(A, N);
+	Heap_sort(A, N);
+	Print_arr(A, N);
 
 	system("pause");
 	cout << endl;
