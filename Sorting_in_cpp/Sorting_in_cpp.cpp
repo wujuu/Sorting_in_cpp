@@ -11,18 +11,17 @@ using namespace std;
 const int N = 20, K = 100;
 
 //LISTS
+//Basic
 struct node {
 	double key;
 	node* next;
 };
-
 node* Get_node(double key) {
 	node* x = new node;
 	x->key = key;
 	x->next = NULL;
 	return x;
 }
-
 void Insert_node(node* &first, node* x) {
 	node* war = new node;
 	war->next = first;
@@ -32,7 +31,6 @@ void Insert_node(node* &first, node* x) {
 	x->next = war->next;
 	war->next = x;
 }
-
 node* Get_list(int n, int k) {
 	node* first = NULL;
 	for (int i = 0; i < n; i++) {
@@ -41,24 +39,20 @@ node* Get_list(int n, int k) {
 	}
 	return first;
 }
-
 void Print_list(node* first) {
 	for (node* x = first; x != NULL; x = x->next)
 		cout << x->key << " ";
 	cout << endl;
 }
-
 void Add_head_node(node* &first, node* x) {
 		x->next = first;
 		first = x;
 }
-
 node* Del_head_node(node* &first) {
 	node* tmp = first;
 	first = first->next;
 	return tmp;
 }
-
 node* Merge_list(node* first1, node* first2) {
 	node* result = NULL;
 
@@ -79,8 +73,6 @@ node* Merge_list(node* first1, node* first2) {
 
 	return result;
 }
-
-
 
 //ARRAYS
 //Basic
@@ -196,12 +188,8 @@ void Heap_sort(int* A, int n) {
 	}
 }
 
+//MAIN
 int main(){
-	int* A = Get_array(N, K);
-	Print_array(A, N);
-	Heap_sort(A, N);
-	Print_arr(A, N);
-
 	system("pause");
 	cout << endl;
     return 0;
