@@ -90,9 +90,18 @@ int* Get_array(int n, int k) {
 }
 void Print_array (int* A, int n) {
 	for (int i = 0; i < n; i++)
-		cout << A[i] << " ";
+		cout << i << " " << A[i] << endl;
 
 	cout << endl;
+}
+int Search_sorted_array(int* A, int x, int start, int end) {
+	if (start <= end) {
+		int k = (start + end) / 2;
+		if (x == A[k]) return k;
+		else if (x < A[k]) Search_sorted_array(A, x, start, k - 1);
+		else Search_sorted_array(A, x, k + 1, end);
+	} 
+	else return -1;
 }
 //Bucket
 void Bucket_sort(double* &A, int n) {
@@ -144,7 +153,7 @@ int Partition(int* A, int start, int end) {
 		else return j;
 	}
 }
-void Quick_sort(int* A, int start=0, int end=N-1) {
+void Quick_sort(int* A, int start, int end) {
 	if (start < end) {
 		int middle = Partition(A, start, end);
 		Quick_sort(A, start, middle);
@@ -190,6 +199,16 @@ void Heap_sort(int* A, int n) {
 
 //MAIN
 int main(){
+	int* A = Get_array(N, K);
+	Quick_sort(A,0,N-1);
+	Print_array(A, N);
+
+	int x;
+	cin >> x;
+	cout << endl;
+	cout << Search_sorted_array(A, x, 0, N - 1);
+
+	cout << endl;
 	system("pause");
 	cout << endl;
     return 0;
