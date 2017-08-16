@@ -53,29 +53,9 @@ node* Del_head_node(node* &first) {
 	first = first->next;
 	return tmp;
 }
-node* Merge_list(node* first1, node* first2) {
-	node* result = NULL;
 
-	while (first1 != NULL && first2 != NULL) {
-		if (first1->key > first2->key)
-			Add_head_node(result, Del_head_node(first1));
-		else
-			Add_head_node(result, Del_head_node(first2));
-	}
-
-	if (first1 == NULL)
-		while (first2 != NULL)
-			Add_head_node(result, Del_head_node(first2));
-
-	if (first2 == NULL)
-		while (first1 != NULL)
-			Add_head_node(result, Del_head_node(first1));
-
-	return result;
-}
-
-//ARRAYS
-//Basic
+//ARRAY FUNCTIONS
+//Basic 
 void Swap(int *A, int i, int j) {
 	int tmp = A[i];
 	A[i] = A[j];
@@ -90,11 +70,10 @@ int* Get_array(int n, int k) {
 }
 void Print_array (int* A, int n) {
 	for (int i = 0; i < n; i++)
-		cout << i << " " << A[i] << endl;
-
+		cout << A[i] << " ";
 	cout << endl;
 }
-int Search_sorted_array(int* A, int x, int start, int end) {
+int Search_sorted_array(int* A, int x, int end, int start=0) {
 	if (start <= end) {
 		int k = (start + end) / 2;
 		if (x == A[k]) return k;
@@ -103,7 +82,7 @@ int Search_sorted_array(int* A, int x, int start, int end) {
 	} 
 	else return -1;
 }
-//Bucket
+//Bucket sort
 void Bucket_sort(double* &A, int n) {
 	node** B=new node*[n];
 
@@ -123,7 +102,7 @@ void Bucket_sort(double* &A, int n) {
 		}
 	}
 }
-//Count
+//Count sort
 void Count_sort(int *&A, int n, int k) {
 	int *B = new int[n], *C = new int[k];
 
@@ -143,7 +122,7 @@ void Count_sort(int *&A, int n, int k) {
 
 	A = B;
 }
-//Quick
+//Quick sort
 int Partition(int* A, int start, int end) {
 	int i = start - 1, j = end + 1, x = A[start];
 	while (true) {
@@ -153,14 +132,14 @@ int Partition(int* A, int start, int end) {
 		else return j;
 	}
 }
-void Quick_sort(int* A, int start, int end) {
+void Quick_sort(int* A, int end, int start=0) {
 	if (start < end) {
-		int middle = Partition(A, start, end);
-		Quick_sort(A, start, middle);
-		Quick_sort(A, middle + 1, end);
+		int middle = Partition(A, end, start);
+		Quick_sort(A, middle, start);
+		Quick_sort(A, end, middle+1);
 	}
 }
-//Heap
+//Heap sort
 int Parent(int i) {
 	return (i - 1) / 2;
 }
@@ -196,19 +175,38 @@ void Heap_sort(int* A, int n) {
 		Heapify(A, 0, i);
 	}
 }
+//Merge sort
+void Merge_two(int* A, int start, int middle, int end) {
+	int *Tmp = new int[end - start + 1], i = start, j = middle + 1, k = 0;
+	
+	while (i <= middle && j <= end) {
+		if (A[i] < A[j]) { Tmp[k] = A[i]; i++;}
+		else { Tmp[k] = A[j]; j++; }
+		k++; }
+
+	if (i <= middle) for (; i <= middle; i++) { Tmp[k] = A[i]; k++; }
+	else if (j <= end) for (; j <= end; j++) { Tmp[k] = A[j]; k++; }
+
+	for (int l = 0; l < (end - start + 1); l++) A[l + start] = Tmp[l];
+
+	delete[] Tmp;
+}
+void Merge_sort(int* A, int start, int end) {
+	if (start < end) {
+		int middle = (start + end) / 2;
+		Merge_sort(A, start, middle);
+		Merge_sort(A, middle+1, end);
+		Merge_two(A, start, middle, end);
+	}
+}
 
 //MAIN
 int main(){
 	int* A = Get_array(N, K);
-	Quick_sort(A,0,N-1);
+	Print_array(A, N);
+	Merge_sort(A,0,N-1);
 	Print_array(A, N);
 
-	int x;
-	cin >> x;
-	cout << endl;
-	cout << Search_sorted_array(A, x, 0, N - 1);
-
-	cout << endl;
 	system("pause");
 	cout << endl;
     return 0;
