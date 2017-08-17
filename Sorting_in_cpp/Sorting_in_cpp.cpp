@@ -199,6 +199,14 @@ void Merge_sort(int* A, int start, int end) {
 		Merge_two(A, start, middle, end);
 	}
 }
+//Select
+int Select(int* A, int n, int k) {
+	if (n == 1) return A[0];
+	int q = Partition(A, 0, n - 1);
+	if (k == q) return A[q];
+	else if (k < q) return Select(A, q, k);
+	else return Select(A + q + 1, n - q + 1, k - (q + 1));
+}
 
 //MAIN
 int main(){
